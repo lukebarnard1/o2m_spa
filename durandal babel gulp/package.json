@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-bower": "0.0.10",
+    "gulp-durandal": "^1.1.7",
+    "gulp-ejs": "^1.1.0",
+    "gulp-gzip": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-ruby-sass": "^1.0.5",
+    "gulp-serve": "^1.0.0",
+    "gulp-util": "^3.0.5",
+    "gulp-webserver": "^0.9.1",
+    "node-static": "^0.7.6"
+  }
+}

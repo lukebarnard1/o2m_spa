@@ -1,0 +1,8 @@
+{
+  "name": "o2m spa",
+  "dependencies": {
+    "bootstrap-sass-official": "~3.3.4",
+    "durandal": "~2.1.0",
+    "fontawesome": "~4.3.0"
+  }
+}
