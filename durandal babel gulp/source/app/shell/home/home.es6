@@ -26,6 +26,7 @@ export default class Link {
 		this.content_id = args.content;
 		this.level = args.level;
 		this.html = ko.observable('Loading...');
+		this.is_comment_box_visible = ko.observable(false);
 
 		var that = this;
 		get_content_from_friend(this.friend, this.content_id, function(response){
@@ -35,6 +36,10 @@ export default class Link {
 
 	get_human_creation_time(){
 		return moment(this.creation_time).fromNow();
+	}
+
+	show_comment_box(){
+		return function () { this.is_comment_box_visible(!this.is_comment_box_visible()) };
 	}
 }
 

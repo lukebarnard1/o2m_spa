@@ -14,7 +14,7 @@
 					    <span data-bind="text: get_human_creation_time()"></span> - 
 						<a  
 						 href="javascript:;" 
-						 onclick="console.log('show comment box')" 
+						 data-bind="click: show_comment_box()" 
 						 title="Comment on this">add comment</a> - 
 						<a  
 						 href="javascript:;" 
@@ -34,9 +34,9 @@
 				</div>
 				<!-- <div class="footer-hider that-can-be-hidden" 
 					style="overflow-y:hidden;display:none"> -->
-					<div class="panel-footer" style="padding:0px">
+					<div data-bind="visible: is_comment_box_visible" class="panel-footer" style="padding:0px">
 						<form action="/o2m/add_linked_content" method="POST">
-							<input type="text" name="content_text" placeholder="write a comment..." style="border:0px;width:100%;padding:5px">
+							<input data-bind="hasFocus: is_comment_box_visible()" type="text" name="content_text" placeholder="write a comment..." style="border:0px;width:100%;padding:5px">
 							<input type="hidden" data-bind="value: content_id" name="content_id">
 							<input type="hidden" data-bind="value: link_server.address" name="friend_address">
 							<input type="hidden" data-bind="value: link_server.port" name="friend_port">
