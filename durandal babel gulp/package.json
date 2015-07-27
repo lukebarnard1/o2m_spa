@@ -12,5 +12,8 @@
     "gulp-util": "^3.0.5",
     "gulp-webserver": "^0.9.1",
     "node-static": "^0.7.6"
+  },
+  "dependencies": {
+    "moment": "^2.10.5"
   }
 }

@@ -1,3 +1,49 @@
-<div>
-	<h1 data-bind='html : title'></h1>
+<div class="col-md-1"></div>
+<div class="col-md-8">
+	<h1 data-bind='html: title'></h1>
+	<ul data-bind='foreach: posts'>
+		<li class="media" data-bind='style: {marginLeft : (10 + level * 50) + "px"}'>
+			<div
+				class="media-body panel panel-default" 
+				
+			>
+				<div class="panel-body" style="padding:5px">
+					<a data-bind="href:'/o2m/friend/' + friend.name, text: friend.name"></a>:
+					<span data-bind="text: html"></span>
+					<div class="pull-right">
+					    <span data-bind="text: get_human_creation_time()"></span> - 
+						<a  
+						 href="javascript:;" 
+						 onclick="console.log('show comment box')" 
+						 title="Comment on this">add comment</a> - 
+						<a  
+						 href="javascript:;" 
+						 onclick="console.log('delete this link')" 
+						 title="Delete link">delete link</a> - 
+						<a href="javascript:;" 
+						 onclick="console.log('delete this content')" 
+						 title="Delete content">delete content</a>
+						<form action="/o2m/delete_link" method="POST">
+							<input type="hidden" name="content_id" data-bind="value: content_id"/>
+							<input type="hidden" name="friend_id" data-bind="value: link_server.id"/>
+						</form>
+						<form action="/o2m/delete_content" method="POST">
+							<input type="hidden" name="content_id" data-bind="value: content_id"/>
+						</form>
+					</div>
+				</div>
+				<!-- <div class="footer-hider that-can-be-hidden" 
+					style="overflow-y:hidden;display:none"> -->
+					<div class="panel-footer" style="padding:0px">
+						<form action="/o2m/add_linked_content" method="POST">
+							<input type="text" name="content_text" placeholder="write a comment..." style="border:0px;width:100%;padding:5px">
+							<input type="hidden" data-bind="value: content_id" name="content_id">
+							<input type="hidden" data-bind="value: link_server.address" name="friend_address">
+							<input type="hidden" data-bind="value: link_server.port" name="friend_port">
+						</form>
+					</div>
+					<!-- </div> -->
+			</div>
+		</div>
+	</li>
 </div>
