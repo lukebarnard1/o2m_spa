@@ -5,7 +5,7 @@ import widget from  "plugins/widget";
 
 system.debug(true);
 
-app.title = "Hello Bromegos";
+app.title = "o2m";
 
 app.configurePlugins({
     router: true,

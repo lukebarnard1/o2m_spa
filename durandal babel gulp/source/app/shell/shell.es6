@@ -13,7 +13,7 @@ export default class Shell {
                 moduleId: "shell",
             })
             .map([
-                { route: '', title:'Welcome', moduleId: 'home/home', nav: true },
+                { route: '', title:'Now', moduleId: 'home/home', nav: true },
             ])
             .buildNavigationModel()
             .mapUnknownRoutes('errors/404', 'not-found');
