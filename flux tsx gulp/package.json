@@ -1,0 +1,23 @@
+{
+  "jspm": {
+    "directories": {},
+    "dependencies": {
+      "facebook/flux": "github:facebook/flux@^2.0.2",
+      "react": "npm:react@^0.14.0-beta2"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.1.13",
+      "babel-runtime": "npm:babel-runtime@^5.1.13",
+      "core-js": "npm:core-js@^0.9.4"
+    }
+  },
+  "devDependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.0.4",
+    "gulp-serve": "^1.0.0",
+    "gulp-typescript": "^2.8.0",
+    "jspm": "^0.15.7",
+    "ntypescript": "^1.201508010031.1"
+  }
+}
