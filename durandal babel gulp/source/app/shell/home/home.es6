@@ -6,31 +6,90 @@ function get_url(friend, uri) {
 	return 'http://' + friend.address + ':' + friend.port + uri;
 }
 
-function get_from_friend(friend, uri, callback) {
-	var url = get_url(friend, uri);
-	http.jsonp(url, {}, 'jsoncallback').then(callback);
+function robust_ajax(ajax) {
+
+	var failure = function(){}, success = function(){};
+	var call_failure_callback = function() {
+		failure();
+	}
+	t = setTimeout(call_failure_callback, 5000);
+	
+	ajax.then(function(data){
+		clearTimeout(t);
+		failure = function(){};
+		success(data);
+	});
+
+	var set_timeout = function(f) {
+		failure = f;
+		return t;
+	}
+
+	var set_success = function(s) {
+		success = s;
+		return t;
+	}
+
+	var t = {
+		timeout: set_timeout,
+		success: set_success
+	};
+
+	return t;
 }
 
-function post_to_friend(friend, uri, data, callback) {
+function get_from_friend(friend, uri) {
+	var url = get_url(friend, uri);
+	console.log('GET' + ' to ' + uri);
+
+	if (url.indexOf('=?') == -1) {
+		var callbackParam = 'jsoncallback';
+
+		if (url.indexOf('?') == -1) {
+			url += '?';
+		} else {
+			url += '&';
+		}
+
+		url += callbackParam + '=?';
+	}
+	
+	return robust_ajax($.ajax({
+		url: url,
+		dataType: 'jsonp',
+		data: {}
+	}));
+}
+
+function to_friend(friend, uri, data, method) {
+	console.log(method + ' to ' + uri);
 	var url = get_url(friend, uri);
 	var headers = {};
-	$.ajax({
+	return robust_ajax($.ajax({
 		url: url,
 		data: data,
 		processData: true,
-		type: 'POST',
+		type: method,
 		dataType: 'json',
 		headers: ko.toJS(headers),
 		xhrFields: {
 			withCredentials: true
 		}
-	}).then(callback);
+	}));
 }
 
-function get_content_from_friend(friend, content_id, callback) {
+function post_to_friend(friend, uri, data) {
+	return to_friend(friend, uri, data, 'POST');
+}
+
+function delete_to_friend(friend, uri, data) {
+	return to_friend(friend, uri, data, 'DELETE');
+}
+
+function get_content_from_friend(friend, content_id) {
 	var content_uri = '/content/' + content_id;
 
-	get_from_friend(friend, content_uri, callback);
+	return get_from_friend(friend, content_uri);
 }
 
 export default class Link {
@@ -66,29 +125,46 @@ export default class Link {
 
 	add_comment(){
 		//Add content to this user's server, then add a link to the same server as the parent link
-		var that = this;
-		var callback = function(response) {
-			post_to_friend(
-				that.link_server, 
-				'/node/' + comment_parent_content_id, 
-				response, 
-				function(){window.location = '/'}
-			);
-		};
+		return function() {
+			this.html('Adding comment...');
+			var that = this;
 
-		var comment_parent_content_id = this.content_id;
-		
-		var data = {'content_text':this.comment_text()};
+			var comment_parent_content_id = this.content_id;
+			
+			var data = {'content_text':this.comment_text()};
+			post_to_friend(this.user, '/content/' + comment_parent_content_id, data)
+			.success(function(response) {
+				console.log(response);
+				post_to_friend(
+					that.link_server, 
+					'/node/' + comment_parent_content_id, 
+					response				
+				)
+				.success(function(){window.location = '/'})
+				.timeout(function(){console.log('Failed link comment')})
+			}).timeout(function(){
+				console.log('Fail to add comment');
+			});
+		}
+	}
 
-		post_to_friend(this.user, '/content/' + comment_parent_content_id, data, callback);
+	delete_link_content(){
+		return function() {
+			var that = this;
+			delete_to_friend(this.user, '/content/' + this.content_id, this.reload)
+			.success(function(){that.html("[deleted]")});
+		}
 	}
 
 	reload() {
 		var that = this;
-		get_content_from_friend(this.friend, this.content_id, function(response){
-			that.html(response.text);
-		});
-		this.reload_children();
+		get_content_from_friend(this.friend, this.content_id)
+		.timeout(
+			function() {that.html("Loading... (no response yet)")}
+		).success(
+			function( data ) {that.html(data.text)}
+		);
+		// this.reload_children();
 	}
 
 	reload_children() {
@@ -110,7 +186,6 @@ function posts_from_friend(friend, user, callback) {
 				var link = children[i];
 				link.link_server = friend;
 				link.level = level;
-				console.log(friend);
 				if (link.children.length > 0) {
 					link.children = get_children_indented(link.children, level + 1);		
 				} else {
@@ -130,7 +205,7 @@ function posts_from_friend(friend, user, callback) {
 		callback(flat_children);
 	};
 
-	get_from_friend(friend, '/timeline',cb);
+	get_from_friend(friend, '/timeline').success(cb).timeout(function(){callback([])});
 }
 
 export default class Home {
